@@ -5,10 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Domain.Model {
+    public enum CategoryState
+    {
+        Listed,
+        Deleted
+    }
     public class Category {
         public int Id { get; set; }
         public string Name { get; set; }
-        // LISTED, DELETED
-        public string state { get; set; }
+        public CategoryState State { get; set; }
     }
 }
