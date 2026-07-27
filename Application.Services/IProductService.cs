@@ -10,7 +10,7 @@ namespace Application.Services
 {
     public interface IProductService
     {
-        Task AddAsync(ProductDTO product);
+        Task<ProductDTO> AddAsync(ProductDTO product);
         Task<bool> DeleteAsync(int id);
         Task<ProductDTO?> GetAsync(int id);
         Task<IEnumerable<ProductDTO>> GetAllAsync();
