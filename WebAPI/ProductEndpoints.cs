@@ -43,6 +43,7 @@ namespace WebAPI
                 }
                 catch (ArgumentException ex)
                 {
+                    // TODO: Delete internal error messages leaks
                     return Results.BadRequest(new { error = ex.Message });
                 }
             })
@@ -66,6 +67,7 @@ namespace WebAPI
                 }
                 catch (ArgumentException ex)
                 {
+                    // TODO: Delete internal error messages leaks
                     return Results.BadRequest(new { error = ex.Message });
                 }
             })

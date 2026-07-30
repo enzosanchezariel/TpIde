@@ -1,4 +1,5 @@
 ﻿using Data;
+using Domain.Model;
 using DTOs;
 using System;
 using System.Collections.Generic;
@@ -17,29 +18,59 @@ namespace Application.Services
             this.categoryRepository = categoryRepository;
         }
 
-        public Task AddAsync(CategoryDTO category)
+        public async Task<CategoryDTO> AddAsync(CategoryDTO dto)
         {
-            throw new NotImplementedException();
+            Category category = new Category(
+                0,
+                dto.Name.Trim(),
+                CategoryState.Listed
+            );
+            await categoryRepository.AddAsync(category);
+            dto.Id = category.Id;
+            dto.Name = category.Name;
+            dto.State = category.State.ToString();
+
+            return dto;
         }
 
-        public Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            return await categoryRepository.DeleteAsync(id);
         }
 
-        public Task<IEnumerable<CategoryDTO>> GetAllAsync()
+        public async Task<IEnumerable<CategoryDTO>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            // TODO: Add pagination
+            var categories = await categoryRepository.GetAllAsync();
+
+            return categories.Select(category => new CategoryDTO {
+                Id = category.Id,
+                Name = category.Name,
+                State = category.State.ToString()
+            }).ToList();
         }
 
-        public Task<CategoryDTO?> GetAsync(int id)
+        public async Task<CategoryDTO?> GetAsync(int id)
         {
-            throw new NotImplementedException();
+            Category? category = await categoryRepository.GetAsync(id);
+
+            if (category == null) return null;
+
+            return new CategoryDTO {
+                Id = category.Id,
+                Name = category.Name,
+                State = category.State.ToString()
+            };
         }
 
-        public Task<bool> UpdateAsync(CategoryDTO category)
+        public async Task<bool> UpdateAsync(CategoryDTO dto)
         {
-            throw new NotImplementedException();
+            Category? category = await categoryRepository.GetAsync(dto.Id);
+            if (category == null) return false;
+            category.setName(dto.Name.Trim());
+            category.setState(CategoryState.Listed);
+
+            return await categoryRepository.UpdateAsync(category);
         }
     }
 }
