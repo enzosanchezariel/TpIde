@@ -3,10 +3,10 @@
         public decimal Value { get; private set; }
         public DateTime DateTime { get; private set; }
 
-        public Price(decimal value, DateTime dateTime)
+        public Price(decimal value)
         {
             setValue(value);
-            setDateTime(dateTime);
+            setDateTime(DateTime.Now);
         }
 
         private void setDateTime(DateTime dateTime)
