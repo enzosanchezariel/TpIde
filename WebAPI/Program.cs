@@ -38,6 +38,10 @@ namespace WebAPI
 
             //app.UseAuthorization();
 
+            // Map endpoints
+            app.MapCategoryEndpoints();
+            app.MapProductEndpoints();
+
             app.Run();
         }
     }

@@ -11,8 +11,27 @@ namespace Domain.Model {
         Deleted
     }
     public class Category {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public CategoryState State { get; set; }
+        public int Id { get; private set; }
+        public string Name { get; private set; }
+        public CategoryState State { get; private set; }
+
+        public Category(int id, string name, CategoryState state)
+        {
+            setId(id);
+            setName(name);
+            setState(state);
+        }
+
+        public void setState(CategoryState state) {
+            State = state;
+        }
+
+        public void setName(string name) {
+            Name = name;
+        }
+
+        public void setId(int id) {
+            Id = id;
+        }
     }
 }

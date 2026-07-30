@@ -9,5 +9,18 @@ namespace Domain.Model {
         public int Id { get; set; }
         public int Number { get; set; }
 
+        public Table(int id, int number)
+        {
+            setId(id);
+            setNumber(number);
+        }
+
+        private void setNumber(int number) {
+            Number = number;
+        }
+
+        private void setId(int id) {
+            Id = id;
+        }
     }
 }
