@@ -35,6 +35,11 @@ namespace Data
             return Task.FromResult(categories.FirstOrDefault(c => c.Id == id));
         }
 
+        public Task<Category?> GetByNameAsync(String name)
+        {
+            return Task.FromResult(categories.FirstOrDefault(c => c.Name == name));
+        }
+
         public Task<bool> UpdateAsync(Category category)
         {
             var index = categories.FindIndex(p => p.Id == category.Id);

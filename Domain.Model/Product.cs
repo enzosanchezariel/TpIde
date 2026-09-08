@@ -16,7 +16,7 @@ namespace Domain.Model {
         public string Name { get; private set; }
         public string Description { get; private set; }
         public ProductState State { get; private set; }
-        public Category Category { get; private set; }
+        public Category? Category { get; private set; }
         public List<Price> Prices { get; private set; } = new List<Price>();
         public Price Price
         {

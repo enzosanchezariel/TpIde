@@ -20,15 +20,18 @@ namespace Application.Services
 
         public async Task<CategoryDTO> AddAsync(CategoryDTO dto)
         {
+            Category? existingCategory = await categoryRepository.GetByNameAsync(dto.Name.Trim());
+            if (existingCategory != null)
+            {
+                throw new InvalidOperationException("A category with this name already exists.");
+            }
             Category category = new Category(
                 0,
-                dto.Name.Trim(),
-                CategoryState.Listed
+                dto.Name.Trim()
             );
             await categoryRepository.AddAsync(category);
             dto.Id = category.Id;
             dto.Name = category.Name;
-            dto.State = category.State.ToString();
 
             return dto;
         }
@@ -45,8 +48,7 @@ namespace Application.Services
 
             return categories.Select(category => new CategoryDTO {
                 Id = category.Id,
-                Name = category.Name,
-                State = category.State.ToString()
+                Name = category.Name
             }).ToList();
         }
 
@@ -58,8 +60,7 @@ namespace Application.Services
 
             return new CategoryDTO {
                 Id = category.Id,
-                Name = category.Name,
-                State = category.State.ToString()
+                Name = category.Name
             };
         }
 
@@ -68,7 +69,6 @@ namespace Application.Services
             Category? category = await categoryRepository.GetAsync(dto.Id);
             if (category == null) return false;
             category.setName(dto.Name.Trim());
-            category.setState(CategoryState.Listed);
 
             return await categoryRepository.UpdateAsync(category);
         }
