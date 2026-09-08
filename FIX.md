@@ -1,0 +1,70 @@
+# Retroalimentación - Entrega 1
+
+Hola Enzo,
+
+Recibimos tu **Entrega 1** y el aviso de que el grupo cambió de composición. Ya la revisamos: **está aprobada**. Cumplís el alcance de la entrega —la solución compila, respeta la arquitectura de referencia y Swagger levanta con el CRUD completo de Product y Category en memoria—, pero encontramos un error que hace que la categoría de un producto no se guarde. Te lo detallamos abajo porque conviene resolverlo antes de meter Entity Framework.
+
+## Lo que está bien
+
+- La arquitectura está bien separada y fiel a la referencia: `Domain.Model`, `DTOs`, `Data`, `Application.Services` y `WebAPI`.
+- Modelaste seis entidades (Product, Category, Order, Table, User, Price), no solo las dos que pedía la entrega. El modelo está pensado más allá del mínimo.
+- Los tipos de datos están bien elegidos: `decimal` para dinero, `DateTime` para fechas y `enum` para todos los estados (`ProductState`, `CategoryState`, `OrderState`, `UserType`). Es un detalle que se paga caro cuando llega Entity Framework, y vos ya lo tenés resuelto.
+- El encapsulamiento está bien aplicado: `private set` más un método `set...` por atributo.
+- **Price como histórico** es una buena decisión de diseño: Product guarda una lista de precios con su fecha y la propiedad `Price` devuelve el vigente. Te va a servir para los reportes de la entrega final.
+- Los endpoints capturan `ArgumentException` y devuelven 400, dejando propagar el resto. Es exactamente el criterio correcto.
+- El repositorio está prolijo: `.gitignore` completo, sin `bin`, `obj` ni archivos `.user` versionados. Es lo que pide la consigna.
+
+## A tener en cuenta para la siguiente entrega
+
+### 🔴 Crítico: La categoría de un producto no se guarda
+En `ProductService.AddAsync` se construye `new Category(0, "PLACEHOLDER", CategoryState.Listed)` ignorando el `Category` que viene en el DTO. Lo probamos: un POST a `/products` con `category: 1` responde `category: 1` —porque devuelve el DTO que entró— pero el GET siguiente devuelve `category: 0`. Además `UpdateAsync` sí conserva el id, así que crear y modificar se comportan distinto. 
+
+**Solución:** Inyectar `ICategoryRepository` en `ProductService`, buscar la categoría real y, si no existe, lanzar `ArgumentException`.
+
+### El dominio no valida nada
+Los métodos `set...` sólo asignan. Un POST a `/products` con `name: ""` y `price: -999` devuelve 201 Created. Las validaciones van en el dominio: nombre obligatorio, precio mayor a cero, largos máximos.
+
+### Un campo opcional ausente rompe la API con un 500
+`dto.Name.Trim()` y `dto.Description.Trim()` se llaman sin chequear `null`: un POST a `/products` sin `description` devuelve `NullReferenceException`. Son los dos warnings **CS8602** que tira el compilador en `ProductService`, vale la pena mirarlos.
+
+### Falta unicidad
+Se pueden crear dos categorías con el mismo nombre.
+
+### Los enums de estado no se pueden usar desde la API
+`UpdateAsync` fuerza `Listed` en producto y en categoría, así que no hay forma de ocultar un producto ni de marcarlo sin stock: el estado tendría que venir del DTO.
+
+### DELETE borra físicamente
+`CategoryState.Deleted` nunca se usa. Si tenías pensada la baja lógica, ahí está el lugar. Y hoy se puede borrar una categoría que tiene productos asociados: quedan apuntando a una categoría que ya no existe.
+
+### La respuesta del POST queda incompleta
+Devuelve `state: null`, mientras que el GET del mismo producto devuelve `"Listed"`. Conviene armar el DTO de respuesta a partir de la entidad ya guardada, igual que hacés en el GET.
+
+### User es un outlier
+`User` quedó fuera del criterio de las demás entidades: propiedades públicas con `set` y sin constructor, mientras que las otras cinco están bien encapsuladas.
+
+### Andamiaje vacío
+Limpiar:
+- `IOrderRepository`, `IUserRepository`, `IPriceRepository`, `ITableRepository`
+- `OrderRepository`, `UserRepository`, `TableRepository` (sin contenido)
+- `PriceRepository.cs` contiene una clase llamada `Class1` (se renombró el archivo pero no la clase)
+
+### Falta el README
+Tanto en la entrega como en el repositorio. Mínimo:
+- Integrante con legajo y mail
+- Descripción del sistema
+- Tecnologías
+- Cómo ejecutarlo
+
+## Comentario sobre el modelo
+
+Order con su lista de productos y de mesas es justo el caso que pide la consigna para el CRUD maestro/detalle. Lo que le falta es la **entidad de línea de pedido** (producto, cantidad y precio al momento del pedido) — y ahí es donde el histórico de precios que ya armaste se vuelve útil. 
+
+User con `UserType` (Client, Waiter, Admin) ya cubre el requisito de dos tipos de usuario con permisos distintos.
+
+---
+
+**Te pedimos que apliques estos puntos en la Entrega 2: los vamos a mirar cuando la corrijamos.**
+
+Saludos,
+
+**Sebastián**
