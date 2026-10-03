@@ -16,11 +16,6 @@ Recibimos tu **Entrega 1** y el aviso de que el grupo cambió de composición. Y
 
 ## A tener en cuenta para la siguiente entrega
 
-### 🔴 Crítico: La categoría de un producto no se guarda
-En `ProductService.AddAsync` se construye `new Category(0, "PLACEHOLDER", CategoryState.Listed)` ignorando el `Category` que viene en el DTO. Lo probamos: un POST a `/products` con `category: 1` responde `category: 1` —porque devuelve el DTO que entró— pero el GET siguiente devuelve `category: 0`. Además `UpdateAsync` sí conserva el id, así que crear y modificar se comportan distinto. 
-
-**Solución:** Inyectar `ICategoryRepository` en `ProductService`, buscar la categoría real y, si no existe, lanzar `ArgumentException`.
-
 ### El dominio no valida nada
 Los métodos `set...` sólo asignan. Un POST a `/products` con `name: ""` y `price: -999` devuelve 201 Created. Las validaciones van en el dominio: nombre obligatorio, precio mayor a cero, largos máximos.
 

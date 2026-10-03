@@ -12,20 +12,28 @@ namespace Application.Services
     public class ProductService : IProductService
     {
         private readonly IProductRepository productRepository;
+        private readonly ICategoryRepository categoryRepository;
 
-        public ProductService(IProductRepository productRepository)
+        public ProductService(IProductRepository productRepository, ICategoryRepository categoryRepository)
         {
             this.productRepository = productRepository;
+            this.categoryRepository = categoryRepository;
         }
 
         public async Task<ProductDTO> AddAsync(ProductDTO dto)
         {
+            Category? category = await categoryRepository.GetAsync(dto.Category);
+            if (category == null)
+            {
+                throw new ArgumentException($"Category with id {dto.Category} does not exist.");
+            }
+
             Product product = new Product(
                 0,
                 dto.Name.Trim(),
-                dto.Description.Trim(),
+                dto.Description == null ? null : dto.Description.Trim(),
                 ProductState.Listed,
-                new Category(0, "PLACEHOLDER", CategoryState.Listed),
+                category,
                 new Price(dto.Price)
             );
             await productRepository.AddAsync(product);
@@ -76,10 +84,17 @@ namespace Application.Services
         {
             Product? product = await productRepository.GetAsync(dto.Id);
             if (product == null) return false;
+
+            Category? category = await categoryRepository.GetAsync(dto.Category);
+            if (category == null)
+            {
+                throw new ArgumentException($"Category with id {dto.Category} does not exist.");
+            }
+
             product.setName(dto.Name.Trim());
-            product.setDescription(dto.Description.Trim());
+            product.setDescription(dto.Description == null ? null : dto.Description.Trim());
             product.setState(ProductState.Listed);
-            product.setCategory(new Category(dto.Category, "PLACEHOLDER", CategoryState.Listed));
+            product.setCategory(category);
             product.setPrice(new Price(dto.Price));
 
             return await productRepository.UpdateAsync(product);
