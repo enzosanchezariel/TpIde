@@ -20,6 +20,8 @@ namespace Application.Services
 
         public async Task<CategoryDTO> AddAsync(CategoryDTO dto)
         {
+            ValidateCategory(dto);
+
             Category? existingCategory = await categoryRepository.GetByNameAsync(dto.Name.Trim());
             if (existingCategory != null)
             {
@@ -66,11 +68,21 @@ namespace Application.Services
 
         public async Task<bool> UpdateAsync(CategoryDTO dto)
         {
+            ValidateCategory(dto);
+
             Category? category = await categoryRepository.GetAsync(dto.Id);
             if (category == null) return false;
             category.setName(dto.Name.Trim());
 
             return await categoryRepository.UpdateAsync(category);
+        }
+
+        private static void ValidateCategory(CategoryDTO dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.Name))
+            {
+                throw new ArgumentException("Category name cannot be empty.");
+            }
         }
     }
 }

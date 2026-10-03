@@ -22,6 +22,8 @@ namespace Application.Services
 
         public async Task<ProductDTO> AddAsync(ProductDTO dto)
         {
+            ValidateProduct(dto);
+
             Category? category = dto.Category == null ? null : await categoryRepository.GetAsync(dto.Category.Value);
             if (category == null)
             {
@@ -82,6 +84,8 @@ namespace Application.Services
 
         public async Task<bool> UpdateAsync(ProductDTO dto)
         {
+            ValidateProduct(dto);
+
             Product? product = await productRepository.GetAsync(dto.Id);
             if (product == null) return false;
 
@@ -98,6 +102,19 @@ namespace Application.Services
             product.setPrice(new Price(dto.Price));
 
             return await productRepository.UpdateAsync(product);
+        }
+
+        private static void ValidateProduct(ProductDTO dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.Name))
+            {
+                throw new ArgumentException("Product name cannot be empty.");
+            }
+
+            if (dto.Price < 0)
+            {
+                throw new ArgumentException("Product price cannot be negative.");
+            }
         }
     }
 }
