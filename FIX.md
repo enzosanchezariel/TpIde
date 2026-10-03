@@ -19,9 +19,6 @@ Recibimos tu **Entrega 1** y el aviso de que el grupo cambió de composición. Y
 ### El dominio no valida nada
 Los métodos `set...` sólo asignan. Un POST a `/products` con `name: ""` y `price: -999` devuelve 201 Created. Las validaciones van en el dominio: nombre obligatorio, precio mayor a cero, largos máximos.
 
-### Un campo opcional ausente rompe la API con un 500
-`dto.Name.Trim()` y `dto.Description.Trim()` se llaman sin chequear `null`: un POST a `/products` sin `description` devuelve `NullReferenceException`. Son los dos warnings **CS8602** que tira el compilador en `ProductService`, vale la pena mirarlos.
-
 ### Los enums de estado no se pueden usar desde la API
 `UpdateAsync` fuerza `Listed` en producto y en categoría, así que no hay forma de ocultar un producto ni de marcarlo sin stock: el estado tendría que venir del DTO.
 

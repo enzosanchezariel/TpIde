@@ -22,7 +22,7 @@ namespace Application.Services
 
         public async Task<ProductDTO> AddAsync(ProductDTO dto)
         {
-            Category? category = await categoryRepository.GetAsync(dto.Category);
+            Category? category = dto.Category == null ? null : await categoryRepository.GetAsync(dto.Category.Value);
             if (category == null)
             {
                 throw new ArgumentException($"Category with id {dto.Category} does not exist.");
@@ -60,7 +60,7 @@ namespace Application.Services
                 Name = product.Name,
                 Description = product.Description,
                 State = product.State.ToString(),
-                Category = product.Category.Id,
+                Category = product.Category == null ? null : product.Category.Id,
                 Price = product.Price.Value
             }).ToList();
         }
@@ -75,7 +75,7 @@ namespace Application.Services
                 Name = product.Name,
                 Description = product.Description,
                 State = product.State.ToString(),
-                Category = product.Category.Id,
+                Category = product.Category == null ? null : product.Category.Id,
                 Price = product.Price.Value
             };
         }
@@ -85,7 +85,7 @@ namespace Application.Services
             Product? product = await productRepository.GetAsync(dto.Id);
             if (product == null) return false;
 
-            Category? category = await categoryRepository.GetAsync(dto.Category);
+            Category? category = dto.Category == null ? null : await categoryRepository.GetAsync(dto.Category.Value);
             if (category == null)
             {
                 throw new ArgumentException($"Category with id {dto.Category} does not exist.");
