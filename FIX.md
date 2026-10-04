@@ -14,11 +14,6 @@ Recibimos tu **Entrega 1** y el aviso de que el grupo cambió de composición. Y
 - Los endpoints capturan `ArgumentException` y devuelven 400, dejando propagar el resto. Es exactamente el criterio correcto.
 - El repositorio está prolijo: `.gitignore` completo, sin `bin`, `obj` ni archivos `.user` versionados. Es lo que pide la consigna.
 
-## A tener en cuenta para la siguiente entrega
-
-### La respuesta del POST queda incompleta
-Devuelve `state: null`, mientras que el GET del mismo producto devuelve `"Listed"`. Conviene armar el DTO de respuesta a partir de la entidad ya guardada, igual que hacés en el GET.
-
 ## Comentario sobre el modelo
 
 Order con su lista de productos y de mesas es justo el caso que pide la consigna para el CRUD maestro/detalle. Lo que le falta es la **entidad de línea de pedido** (producto, cantidad y precio al momento del pedido) — y ahí es donde el histórico de precios que ya armaste se vuelve útil. 

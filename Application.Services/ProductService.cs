@@ -42,6 +42,9 @@ namespace Application.Services
             dto.Id = product.Id;
             dto.Name = product.Name;
             dto.Description = product.Description;
+            dto.State = product.State.ToString();
+            dto.Category = product.Category == null ? null : product.Category.Id;
+            dto.Price = product.Price.Value;
 
             return dto;
         }
