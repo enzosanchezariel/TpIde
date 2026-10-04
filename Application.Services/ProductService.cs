@@ -25,7 +25,7 @@ namespace Application.Services
             ValidateProduct(dto);
 
             Category? category = dto.Category == null ? null : await categoryRepository.GetAsync(dto.Category.Value);
-            if (category == null)
+            if (dto.Category != null && category == null)
             {
                 throw new ArgumentException($"Category with id {dto.Category} does not exist.");
             }
@@ -93,7 +93,7 @@ namespace Application.Services
             if (product == null) return false;
 
             Category? category = dto.Category == null ? null : await categoryRepository.GetAsync(dto.Category.Value);
-            if (category == null)
+            if (dto.Category != null && category == null)
             {
                 throw new ArgumentException($"Category with id {dto.Category} does not exist.");
             }

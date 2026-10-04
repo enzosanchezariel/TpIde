@@ -46,7 +46,7 @@ namespace Domain.Model {
             Price = price;
         }
 
-        public void setCategory(Category category) {
+        public void setCategory(Category? category) {
             Category = category;
         }
 
