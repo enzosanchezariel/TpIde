@@ -97,7 +97,23 @@ namespace Application.Services
 
             product.setName(dto.Name.Trim());
             product.setDescription(dto.Description == null ? null : dto.Description.Trim());
-            product.setState(ProductState.Listed);
+
+            switch (dto.State)
+            {
+                case "Listed":
+                    product.setState(ProductState.Listed);
+                    break;
+                case "Hidden":
+                    product.setState(ProductState.Hidden);
+                    break;
+                case "OutOfStock":
+                    product.setState(ProductState.OutOfStock);
+                    break;
+                default:
+                    product.setState(ProductState.Listed);
+                    break;
+            }
+
             product.setCategory(category);
             product.setPrice(new Price(dto.Price));
 

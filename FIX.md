@@ -16,9 +16,6 @@ Recibimos tu **Entrega 1** y el aviso de que el grupo cambió de composición. Y
 
 ## A tener en cuenta para la siguiente entrega
 
-### Los enums de estado no se pueden usar desde la API
-`UpdateAsync` fuerza `Listed` en producto y en categoría, así que no hay forma de ocultar un producto ni de marcarlo sin stock: el estado tendría que venir del DTO.
-
 ### La respuesta del POST queda incompleta
 Devuelve `state: null`, mientras que el GET del mismo producto devuelve `"Listed"`. Conviene armar el DTO de respuesta a partir de la entidad ya guardada, igual que hacés en el GET.
 
