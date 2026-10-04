@@ -9,5 +9,6 @@ namespace Data
         Task<Category?> GetAsync(int id);
         Task<IEnumerable<Category>> GetAllAsync();
         Task<bool> UpdateAsync(Category category);
+        Task<Category?> GetByNameAsync(string name);
     }
 }

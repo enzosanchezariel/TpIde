@@ -5,25 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Domain.Model {
-    public enum CategoryState
-    {
-        Listed,
-        Deleted
-    }
     public class Category {
         public int Id { get; private set; }
         public string Name { get; private set; }
-        public CategoryState State { get; private set; }
 
-        public Category(int id, string name, CategoryState state)
+        public Category(int id, string name)
         {
             setId(id);
             setName(name);
-            setState(state);
-        }
-
-        public void setState(CategoryState state) {
-            State = state;
         }
 
         public void setName(string name) {

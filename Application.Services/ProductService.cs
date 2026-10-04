@@ -12,26 +12,39 @@ namespace Application.Services
     public class ProductService : IProductService
     {
         private readonly IProductRepository productRepository;
+        private readonly ICategoryRepository categoryRepository;
 
-        public ProductService(IProductRepository productRepository)
+        public ProductService(IProductRepository productRepository, ICategoryRepository categoryRepository)
         {
             this.productRepository = productRepository;
+            this.categoryRepository = categoryRepository;
         }
 
         public async Task<ProductDTO> AddAsync(ProductDTO dto)
         {
+            ValidateProduct(dto);
+
+            Category? category = dto.Category == null ? null : await categoryRepository.GetAsync(dto.Category.Value);
+            if (dto.Category != null && category == null)
+            {
+                throw new ArgumentException($"Category with id {dto.Category} does not exist.");
+            }
+
             Product product = new Product(
                 0,
                 dto.Name.Trim(),
-                dto.Description.Trim(),
+                dto.Description == null ? null : dto.Description.Trim(),
                 ProductState.Listed,
-                new Category(0, "PLACEHOLDER", CategoryState.Listed),
+                category,
                 new Price(dto.Price)
             );
             await productRepository.AddAsync(product);
             dto.Id = product.Id;
             dto.Name = product.Name;
             dto.Description = product.Description;
+            dto.State = product.State.ToString();
+            dto.Category = product.Category == null ? null : product.Category.Id;
+            dto.Price = product.Price.Value;
 
             return dto;
         }
@@ -52,7 +65,7 @@ namespace Application.Services
                 Name = product.Name,
                 Description = product.Description,
                 State = product.State.ToString(),
-                Category = product.Category.Id,
+                Category = product.Category == null ? null : product.Category.Id,
                 Price = product.Price.Value
             }).ToList();
         }
@@ -67,22 +80,60 @@ namespace Application.Services
                 Name = product.Name,
                 Description = product.Description,
                 State = product.State.ToString(),
-                Category = product.Category.Id,
+                Category = product.Category == null ? null : product.Category.Id,
                 Price = product.Price.Value
             };
         }
 
         public async Task<bool> UpdateAsync(ProductDTO dto)
         {
+            ValidateProduct(dto);
+
             Product? product = await productRepository.GetAsync(dto.Id);
             if (product == null) return false;
+
+            Category? category = dto.Category == null ? null : await categoryRepository.GetAsync(dto.Category.Value);
+            if (dto.Category != null && category == null)
+            {
+                throw new ArgumentException($"Category with id {dto.Category} does not exist.");
+            }
+
             product.setName(dto.Name.Trim());
-            product.setDescription(dto.Description.Trim());
-            product.setState(ProductState.Listed);
-            product.setCategory(new Category(dto.Category, "PLACEHOLDER", CategoryState.Listed));
+            product.setDescription(dto.Description == null ? null : dto.Description.Trim());
+
+            switch (dto.State)
+            {
+                case "Listed":
+                    product.setState(ProductState.Listed);
+                    break;
+                case "Hidden":
+                    product.setState(ProductState.Hidden);
+                    break;
+                case "OutOfStock":
+                    product.setState(ProductState.OutOfStock);
+                    break;
+                default:
+                    product.setState(ProductState.Listed);
+                    break;
+            }
+
+            product.setCategory(category);
             product.setPrice(new Price(dto.Price));
 
             return await productRepository.UpdateAsync(product);
+        }
+
+        private static void ValidateProduct(ProductDTO dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.Name))
+            {
+                throw new ArgumentException("Product name cannot be empty.");
+            }
+
+            if (dto.Price < 0)
+            {
+                throw new ArgumentException("Product price cannot be negative.");
+            }
         }
     }
 }

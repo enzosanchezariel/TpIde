@@ -14,9 +14,9 @@ namespace Domain.Model {
     public class Product {
         public int Id { get; private set; }
         public string Name { get; private set; }
-        public string Description { get; private set; }
+        public string? Description { get; private set; }
         public ProductState State { get; private set; }
-        public Category Category { get; private set; }
+        public Category? Category { get; private set; }
         public List<Price> Prices { get; private set; } = new List<Price>();
         public Price Price
         {
@@ -28,7 +28,7 @@ namespace Domain.Model {
             }
         }
 
-        public Product(int id, string name, string description, ProductState state, Category category, Price price)
+        public Product(int id, string name, string? description, ProductState state, Category category, Price price)
         {
             setId(id);
             setName(name);
@@ -46,7 +46,7 @@ namespace Domain.Model {
             Price = price;
         }
 
-        public void setCategory(Category category) {
+        public void setCategory(Category? category) {
             Category = category;
         }
 
@@ -54,7 +54,7 @@ namespace Domain.Model {
             State = state;
         }
 
-        public void setDescription(string description) {
+        public void setDescription(string? description) {
             Description = description;
         }
 
