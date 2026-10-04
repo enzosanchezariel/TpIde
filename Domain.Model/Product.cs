@@ -28,7 +28,7 @@ namespace Domain.Model {
             }
         }
 
-        public Product(int id, string name, string? description, ProductState state, Category category, Price price)
+        public Product(int id, string name, string? description, ProductState state, Category? category, Price price)
         {
             setId(id);
             setName(name);
